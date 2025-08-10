@@ -192,21 +192,13 @@ namespace MediaBrowser.Providers.MediaInfo
             if (audio.SupportsPeople && !audio.LockedFields.Contains(MetadataField.Cast))
             {
                 var people = new List<PersonInfo>();
-                string[]? albumArtists = null;
-                if (libraryOptions.PreferNonstandardArtistsTag)
-                {
-                    TryGetSanitizedAdditionalFields(track, "ALBUMARTISTS", out var albumArtistsTagString);
-                    if (albumArtistsTagString is not null)
-                    {
-                        albumArtists = albumArtistsTagString.Split(InternalValueSeparator);
-                    }
-                }
 
-                if (albumArtists is null || albumArtists.Length == 0)
-                {
-                    albumArtists = string.IsNullOrEmpty(trackAlbumArtist) ? [] : trackAlbumArtist.Split(InternalValueSeparator);
-                }
-
+                // Patch by vbs: just use AlbumArtists from mediaInfo which has been parsed from the tags before this call
+                var albumArtists = mediaInfo.AlbumArtists;
+                // if (albumArtists is null || albumArtists.Length == 0)
+                // {
+                //    albumArtists = string.IsNullOrEmpty(trackAlbumArtist) ? [] : trackAlbumArtist.Split(InternalValueSeparator);
+                // }
                 if (libraryOptions.UseCustomTagDelimiters)
                 {
                     albumArtists = albumArtists.SelectMany(a => SplitWithCustomDelimiter(a, libraryOptions.GetCustomTagDelimiters(), libraryOptions.DelimiterWhitelist)).ToArray();
@@ -224,7 +216,10 @@ namespace MediaBrowser.Providers.MediaInfo
                     }
                 }
 
-                string[]? performers = null;
+                // Patch by vbs: use Artists from mediaInfo which has been parsed from the tags before this call
+                string[]? performers = mediaInfo.Artists;
+                // string[]? performers = null;
+
                 if (libraryOptions.PreferNonstandardArtistsTag)
                 {
                     TryGetSanitizedAdditionalFields(track, "ARTISTS", out var artistsTagString);
@@ -344,7 +339,9 @@ namespace MediaBrowser.Providers.MediaInfo
 
             if (!audio.LockedFields.Contains(MetadataField.Genres))
             {
-                var genres = string.IsNullOrEmpty(trackGenre) ? [] : trackGenre.Split(InternalValueSeparator).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                // Patch by vbs: use Genres from mediaInfo which has been parsed from the tags before this call
+                var genres = mediaInfo.Genres;
+                // var genres = string.IsNullOrEmpty(trackGenre) ? [] : trackGenre.Split(InternalValueSeparator).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
                 if (libraryOptions.UseCustomTagDelimiters)
                 {
