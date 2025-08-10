@@ -183,7 +183,10 @@ namespace MediaBrowser.Providers.MediaInfo
             if (audio.SupportsPeople && !audio.LockedFields.Contains(MetadataField.Cast))
             {
                 var people = new List<PersonInfo>();
-                var albumArtists = string.IsNullOrEmpty(track.AlbumArtist) ? [] : track.AlbumArtist.Split(InternalValueSeparator);
+
+                // Patch by vbs: just use AlbumArtists from mediaInfo which has been parsed from the tags before this call
+                var albumArtists = mediaInfo.AlbumArtists;
+                // var albumArtists = string.IsNullOrEmpty(track.AlbumArtist) ? [] : track.AlbumArtist.Split(InternalValueSeparator);
 
                 if (libraryOptions.UseCustomTagDelimiters)
                 {
@@ -202,7 +205,10 @@ namespace MediaBrowser.Providers.MediaInfo
                     }
                 }
 
-                string[]? performers = null;
+                // Patch by vbs: use Artists from mediaInfo which has been parsed from the tags before this call
+                string[]? performers = mediaInfo.Artists;
+                // string[]? performers = null;
+
                 if (libraryOptions.PreferNonstandardArtistsTag)
                 {
                     track.AdditionalFields.TryGetValue("ARTISTS", out var artistsTagString);
