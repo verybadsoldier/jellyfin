@@ -325,7 +325,9 @@ namespace MediaBrowser.Providers.MediaInfo
 
             if (!audio.LockedFields.Contains(MetadataField.Genres))
             {
-                var genres = string.IsNullOrEmpty(track.Genre) ? [] : track.Genre.Split(InternalValueSeparator).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                // Patch by vbs: use Genres from mediaInfo which has been parsed from the tags before this call
+                var genres = mediaInfo.Genres;
+                // var genres = string.IsNullOrEmpty(track.Genre) ? [] : track.Genre.Split(InternalValueSeparator).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 
                 if (libraryOptions.UseCustomTagDelimiters)
                 {
